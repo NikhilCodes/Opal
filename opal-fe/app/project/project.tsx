@@ -253,10 +253,11 @@ export function IntegrationTab() {
         <Code block>{`import { Opal } from "@getopal/sdk";
  
 const client = new Opal({
-  apiKey: "${apiKey}"
+  apiKey: "${apiKey}",
+  apiUrl: "http://localhost:8080/api",
 });
  
-client.authenticate("user@example.com", "password123").then((session) => {
+client.authenticate("user@example.com", "password123", "email-password").then((session) => {
   console.log("Authenticated:", session);
 });`}</Code>
 
@@ -344,11 +345,15 @@ export function UsersTab({id}: { id: string }) {
           </Button>
           <CreateModal
             onCreate={(data) => {
-              const roleIds = data.user_roles.split(",")
-              data.user_roles = roleIds.map((roleId: string) => ({
-                role_id: roleId.trim(),
-                project_id: id,
-              }));
+              if (data.user_roles.length !== 0) {
+                const roleIds = data.user_roles.split(",")
+                data.user_roles = roleIds.map((roleId: string) => ({
+                  role_id: roleId.trim(),
+                  project_id: id,
+                }));
+              } else {
+                data.user_roles = [];
+              }
               onCreate(data).then((res) => {
                 refetch().then()
                 return res

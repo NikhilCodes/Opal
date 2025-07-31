@@ -28,9 +28,9 @@ func (s *authService) DoAuth(ctx *gin.Context, credential model.Credential) mode
 	var err error
 	switch credential.AuthType {
 	case "email-password":
-		jwt, err = AuthByEmailPassword(ctx, credential.Email, credential.Password, ctx.GetString("project_id"))
+		jwt, err = AuthByEmailPassword(ctx, credential.Identity, credential.Password, ctx.GetString("project_id"))
 	case "username-password":
-		jwt, err = AuthByEmailPassword(ctx, credential.Username, credential.Password, ctx.GetString("project_id"))
+		jwt, err = AuthByUserPassword(ctx, credential.Identity, credential.Password, ctx.GetString("project_id"))
 	default:
 		err = fmt.Errorf("invalid auth_type")
 	}
@@ -38,13 +38,13 @@ func (s *authService) DoAuth(ctx *gin.Context, credential model.Credential) mode
 	if err != nil {
 		return model.AuthResponse{
 			IsAuthenticated: false,
-			Error:           err,
+			Error:           err.Error(),
 		}
 	}
 	ctx.Header("authorization", "Bearer "+jwt)
 	return model.AuthResponse{
 		IsAuthenticated: true,
-		Error:           nil,
+		Error:           "",
 	}
 }
 
@@ -121,6 +121,7 @@ func (s *authService) GetAuthUser(ctx *gin.Context) (*model.ProjectUser, error) 
 	if err != nil {
 		return nil, err
 	}
+	user.Password = nil // Clear the password field before returning
 	return &user, nil
 }
 

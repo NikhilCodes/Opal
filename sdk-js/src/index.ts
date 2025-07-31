@@ -1,5 +1,5 @@
 // src/opal.ts
-import axios, {AxiosInstance} from 'axios';
+import axios, {AxiosInstance, AxiosResponse} from 'axios';
 
 interface User {
   id: string;
@@ -24,12 +24,12 @@ export class Opal {
     });
   }
 
-  async authenticate(email: string, password: string) {
-    const response = await this.client.post('/auth', {
-      email,
+  async authenticate(identity: string, password: string, authType: 'email-password' | 'username-password') {
+    const response: AxiosResponse = await this.client.post('/auth', {
+      identity,
       password,
+      auth_type: authType
     });
-
     if (response.data.is_authenticated) {
       this.client.defaults.headers.common['Authorization'] = response.headers['authorization']
       this.user = await this.getUser()

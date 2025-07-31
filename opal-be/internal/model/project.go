@@ -47,7 +47,6 @@ func (pu *ProjectUser) BeforeCreate(tx *gorm.DB) (err error) {
 		// set the hashed password
 		hashedPassword := string(hashedPasswordBytes)
 		pu.Password = &hashedPassword
-
 	} else {
 		return gorm.ErrInvalidData
 	}
@@ -80,8 +79,6 @@ func (pu *ProjectUser) BeforeUpdate(tx *gorm.DB) (err error) {
 }
 
 func (pu *ProjectUser) AfterFind(tx *gorm.DB) (err error) {
-	// If the password is not set, we don't want to return it
-	pu.Password = nil
 	return nil
 }
 

@@ -18,7 +18,7 @@ func Load() *Config {
 	}
 	return &Config{
 		ServerPort: getEnv("PORT", ":8080"),
-		DBURL:      getEnv("DB_URL", "postgres://opal:opalpass@0.0.0.0:5432/opal_db"),
+		DBURL:      getEnv("DB_URL", "postgres://opal:opalpass@0.0.0.0:5432/postgres"),
 	}
 }
 
