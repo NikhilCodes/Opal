@@ -1,0 +1,48 @@
+services:
+  opal-fe:
+    build:
+      context: ./opal-fe
+      dockerfile: Dockerfile
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+
+    ports:
+      - '3000:3000'
+    depends_on:
+      - opal-be
+
+  opal-be:
+    build:
+      context: ./opal-be
+      dockerfile: Dockerfile
+    environment:
+      - DB_URL=postgres://opal:opalpass@db:5432/postgres
+    depends_on:
+      - db
+    ports:
+      - '8080:8080'
+
+  db:
+    image: postgres:17.2
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U opal" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      POSTGRES_USER: opal
+      POSTGRES_PASSWORD: opalpass
+    volumes:
+      - opal-pg-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+
+
+volumes:
+  opal-pg-data:

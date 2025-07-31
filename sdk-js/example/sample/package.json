@@ -1,0 +1,18 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "email": "nikhil.nixel@gmail.com",
+    "name": "Nikhil Nayak",
+    "url": "https://github.com/NikhilCodes"
+  },
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@getopal/sdk": "^0.1.2"
+  }
+}
