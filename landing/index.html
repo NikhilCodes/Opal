@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Opal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+    <div>
+        <span style="color:#222;">Opal</span>
+        <span style="font-size: 0.8rem;color: white;background: black;padding: 0.1rem 0.3rem">BETA</span>
+    </div>
+    <div style="display: flex;align-items: center;gap:0.4rem">
+        <button class="primary-btn" onclick="contactUs()">Contact Us<img src="assets/email.svg" alt="email"></button>
+    </div>
+</header>
+<main style="margin-top: 2rem">
+    <div style="display:flex; justify-content:center; align-items:center; gap:3rem" class="container mobile-column">
+        <section style="flex:1; min-width:250px;">
+            <h1 style="margin-bottom:1rem;" class="hero-text">Setup Your IAM<br>
+                <span style="color: #ff006a">Faster Than Ever</span></h1>
+            <p style="font-size:1.3rem; color:#7e7e7e;font-weight:300;line-height: 1.7rem">
+                Launch authentication, authorization, and SSO in record time.
+                Opal delivers production-ready IAM with zero setup headache — fully secure, customizable, and built to
+                scale
+                with your SaaS.
+            </p>
+            <div>
+                <button class="primary-btn" style="font-size: 1.4rem" onclick="goToGithub()">
+                    Github
+                    <img src="assets/github.svg" alt="github">
+                </button>
+            </div>
+        </section>
+        <section style="flex:1; min-width:250px;">
+            <div style="background:#222; color:#eee; padding:1.5rem; font-family:monospace; box-shadow:10pt 10pt 0 rgb(0,212,222); position:relative;" class="terminal">
+                <div style="position:absolute; top:1rem; left:1rem; display:flex; gap:0.4rem;">
+                    <span style="width:12px; height:12px; background:#ff5f56; display:inline-block; border:1px solid #e0443e;"></span>
+                    <span style="width:12px; height:12px; background:#ffbd2e; display:inline-block; border:1px solid #dea123;"></span>
+                    <span style="width:12px; height:12px; background:#27c93f; display:inline-block; border:1px solid #13a10e;"></span>
+                </div>
+                <button id="copy-btn">
+                    <img height="20px" style="filter: invert(100%)" src="assets/copy.svg" alt="copy"/>
+                </button>
+                <div id="setup-commands" style="color:#FFFFFF; margin-top:2rem;">
+                    <span style="color: #27c93f">$</span> <span class="cmd-text">git clone https://github.com/NikhilCodes/Opal.git</span><br>
+                    <span style="color: #27c93f">$</span> <span class="cmd-text">cd Opal</span><br>
+                    <span style="color: #27c93f">$</span> <span class="cmd-text">docker compose up -d</span><br>
+                    <span style="color: #27c93f">$</span> <span
+                        class="cmd-text">docker compose run opal-be ./migrate</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div style="background: #ff006a; margin-top: 2rem; display: flex; color: white" class="secondary-section container mobile-column">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.6rem; min-width: 0;">
+            <div>
+                <div style="aspect-ratio: 1 / 1; height: 50px; background: white; display: flex; place-content: center; place-items: center">
+                    <img src="assets/react.svg" height="40px" alt="language"></div>
+            </div>
+            <div style="font-weight: 600; font-size: 1.3rem">React and Golang</div>
+            Modern stack with React and Golang — designed for speed, scale, and simplicity.
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.6rem; min-width: 0;">
+            <div>
+                <div style="aspect-ratio: 1 / 1; height: 50px; background: white; display: flex; place-content: center; place-items: center">
+                    <img src="assets/db.svg" height="40px" alt="language"></div>
+            </div>
+            <div style="font-weight: 600; font-size: 1.3rem">Postgres and GORM</div>
+            A powerful SQL database paired with Go’s leading ORM for clean, performant, and scalable data handling.
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.6rem; min-width: 0;">
+            <div>
+                <div style="aspect-ratio: 1 / 1; height: 50px; background: white; display: flex; place-content: center; place-items: center">
+                    <img src="assets/sdk.svg" height="40px" alt="language"></div>
+            </div>
+            <div style="font-weight: 600; font-size: 1.3rem">Developer SDKs</div>
+            Easily integrate Opal into your stack with developer-friendly SDKs for JavaScript, Go and many more (coming
+            soon).
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 2rem;" class="container mobile-column third-section">
+        <div style="display: flex; flex-direction: column;gap: 1rem; flex: 1">
+            <div style="font-size: 2.2rem;font-weight: 600">Ready to secure your SaaS?</div>
+            <div style="color:#7e7e7e;font-weight:300;font-size:1.3rem;">
+                Opal gives you everything you need to launch authentication, authorization, and SSO in minutes. Skip the boilerplate — focus on building your product, not infrastructure.
+            </div>
+        </div>
+        <div style="flex: 1; display: flex;">
+            <button class="primary-btn" onclick="goToGithub()">View the code in Github <img src="assets/arrow-up-right.svg" alt="arrow"></button>
+        </div>
+    </div>
+</main>
+<footer>
+    <div>
+        <span>© 2023 Opal. All rights reserved.</span>
+    </div>
+    <div>
+        <span>Made with <img height="16pt" src="assets/heart.svg">️ by <a href="https://github.com/NikhilCodes" target="_blank" style="color: #27c93f;">NikhilCodes</a></span>
+    </div>
+</footer>
+<script src="./script.js"></script>
+</body>
+</html>
