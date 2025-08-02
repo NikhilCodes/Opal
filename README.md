@@ -5,6 +5,7 @@ To install Opal, you can use docker:
 
 ```bash
 docker compose up -d
+docker compose run opal-be ./migrate
 ```
 
 Go to `http://localhost:3000` to access the application.
