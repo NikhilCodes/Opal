@@ -8,75 +8,221 @@ import {motion} from "motion/react";
 import {cn} from "~/utils/styles";
 import {useNavigate} from "react-router";
 import {useSpring, animated} from '@react-spring/three';
+import {PrimaryButton} from "~/components/button";
+
+// export function Landing() {
+//   const navigate = useNavigate();
+//   const [entering, setEntering] = useState(false);
+//
+//   const [springProps, api] = useSpring(() => ({
+//     scale: [1, 1, 1],
+//     position: [0, 0, 0],
+//     rotation: [0, 0, 0],
+//   }));
+//
+//   useEffect(() => {
+//     if (entering) {
+//       api.start({
+//         to: async (next) => {
+//           await next({ rotation: [-Math.PI / 2, 0, 0] }); // rotate to face top
+//           await next({ position: [0, 1.2, 2], scale: [5, 5, 5] }); // move upward into north
+//         },
+//         config: { mass: 1, tension: 150, friction: 20, duration: 1000 },
+//       });
+//
+//       const timeout = setTimeout(() => {
+//         navigate('/projects');
+//       }, 1500);
+//       return () => clearTimeout(timeout);
+//     }
+//   }, [entering, api, navigate]);
+//
+//   return (
+//     <div className="flex flex-col items-center justify-center  h-screen bg-black">
+//       <Vortex baseHue={100}>
+//         <Canvas
+//           camera={{position: [0, 0, 5], fov: 35}}
+//           style={{width: '100vw', height: '100vh', background: 'transparent'}}
+//         >
+//           <animated.group
+//             scale={springProps.scale as unknown as [number, number, number]}
+//             position={springProps.position as unknown as [number, number, number]}
+//             rotation={springProps.rotation as unknown as [number, number, number]}
+//           >
+//             <Text
+//               scale={0.4}
+//               position={[0, 0, 1]}
+//               fontSize={0.7}
+//               color="#000000"
+//               font={'/CarinoSansBold.ttf'}
+//               fontWeight={"bold"}
+//               fontStyle={"normal"}
+//               material={new THREE.MeshBasicMaterial({color: '#ffffff', reflectivity: 0, opacity: 2})}
+//             >
+//               Opal
+//             </Text>
+//             <Html position={[-0.1, -0.15, 2]}>
+//               <button
+//                 onClick={() => setEntering(true)}
+//                 hidden={entering}
+//                 className="bg-black text-cyan-300 px-4 py-2 rounded-lg shadow-lg w-28 hover:bg-white transition-colors duration-300">
+//                 Dive in!
+//               </button>
+//             </Html>
+//             <Droplet/>
+//           </animated.group>
+//           <ambientLight intensity={0.1}/>
+//           {/* Optional: For rotating with mouse */}
+//           {/*<OrbitControls enableZoom={false}/>*/}
+//         </Canvas>
+//       </Vortex>
+//     </div>
+//   );
+// }
 
 export function Landing() {
   const navigate = useNavigate();
-  const [entering, setEntering] = useState(false);
 
-  const [springProps, api] = useSpring(() => ({
-    scale: [1, 1, 1],
-    position: [0, 0, 0],
-    rotation: [0, 0, 0],
-  }));
+  const elementsOnScreen = useRef<string[]>([
+    'random-1', 'random-2', 'random-3'
+  ])
+
+  const addArtifactRandomly = () => {
+    const top = (Math.random() * 100) % 90; // Random top position between 10% and 110%
+    const left = Math.random() * 35; // Random left position between
+
+    const height = Math.random() * 300 + 50; // Random height between 10px and 30px
+    const width = Math.random() * 300 + 50; // Random width between
+    const shadowDepth = Math.random() * 20 + 5; // Random shadow depth between 5px and 25px
+    const backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Random background color
+    const randomId = `random-${Math.floor(Math.random() * 10000000) + 3}`; // Generate a unique ID for the new element
+    const newElement = document.createElement('div');
+    newElement.className = `${randomId}`;
+    newElement.style.position = 'absolute';
+    newElement.style.top = `${top}%`;
+    newElement.style.left = `${left}%`;
+    newElement.style.height = `${height}px`;
+    newElement.style.width = `${width}px`;
+    newElement.style.backgroundColor = backgroundColor;
+    newElement.style.border = '2px solid black';
+    newElement.style.boxShadow = `${shadowDepth}px ${shadowDepth}px 0 1px #000000`;
+    newElement.style.opacity = '0';
+
+    const newElementDup = document.createElement('div');
+    newElementDup.className = `${randomId}`;
+    newElementDup.style.position = 'absolute';
+    newElementDup.style.top = `${top}%`;
+    newElementDup.style.right = `${left}%`;
+    newElementDup.style.height = `${height}px`;
+    newElementDup.style.width = `${width}px`;
+    newElementDup.style.backgroundColor = 'white';
+    newElementDup.style.border = '2px solid black';
+    newElementDup.style.boxShadow = `${shadowDepth}px ${shadowDepth}px 0 1px #000000`;
+    newElementDup.style.opacity = '0';
+
+    // Append the new element to the artifacts container
+    const artifactsContainer = document.querySelector('.artifacts');
+    if (artifactsContainer) {
+      const randomDelay = 1000 * (Math.random() * 4 + 1)
+      newElement.style.transitionDuration = `${200}ms`;
+      newElementDup.style.transitionDuration = `${200}ms`;
+      newElement.style.transitionTimingFunction = 'ease-in-out';
+      newElementDup.style.transitionTimingFunction = 'ease-in-out';
+
+      setTimeout(() => {
+        newElement.style.opacity = '1';
+        newElementDup.style.opacity = '1';
+      }, 10)
+
+      setTimeout(() => {
+        newElement.style.transitionDuration = `${randomDelay - 200}ms`;
+        newElement.style.transform = `translate(${shadowDepth / 2}px, ${shadowDepth / 2}px)`
+        newElement.style.boxShadow = `0 0 0 0 #000000`;
+
+        newElementDup.style.transitionDuration = `${randomDelay - 200}ms`;
+        newElementDup.style.transform = `translate(${shadowDepth / 2}px, ${shadowDepth / 2}px)`
+        newElementDup.style.boxShadow = `0 0 0 0 #000000`;
+        newElement.style.borderWidth = '0';
+      }, 200)
+
+      artifactsContainer.appendChild(newElement);
+      artifactsContainer.appendChild(newElementDup);
+      elementsOnScreen.current.push(randomId);
+      // Remove the element after 5 seconds
+      setTimeout(() => {
+        newElement.style.transitionDuration = `${200}ms`;
+        newElementDup.style.transitionDuration = `${200}ms`;
+        newElement.style.opacity = '0';
+        newElementDup.style.opacity = '0';
+      }, randomDelay - 200)
+      setTimeout(() => {
+        if (artifactsContainer.contains(newElement)) {
+          artifactsContainer.removeChild(newElement);
+          artifactsContainer.removeChild(newElementDup);
+          elementsOnScreen.current = elementsOnScreen.current.filter(id => id !== randomId);
+        }
+      }, randomDelay);
+    }
+  }
+
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const addArtifactRandomlyRecursive = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    addArtifactRandomly();
+    timeoutRef.current = setTimeout(addArtifactRandomlyRecursive, Math.random() * 2000 + 500);
+  }
 
   useEffect(() => {
-    if (entering) {
-      api.start({
-        to: async (next) => {
-          await next({ rotation: [-Math.PI / 2, 0, 0] }); // rotate to face top
-          await next({ position: [0, 1.2, 2], scale: [5, 5, 5] }); // move upward into north
-        },
-        config: { mass: 1, tension: 150, friction: 20, duration: 1000 },
-      });
+    addArtifactRandomlyRecursive()
+    setTimeout(() => {
+      document.querySelectorAll('.artifacts > .random-1')?.forEach(e => e.remove())
+    }, 1000 * (Math.random() * 20 + 1));
+    setTimeout(() => {
+      document.querySelectorAll('.artifacts > .random-2')?.forEach(e => e.remove())
+    }, 1000 * (Math.random() * 20 + 1));
+    setTimeout(() => {
+      document.querySelectorAll('.artifacts > .random-3')?.forEach(e => e.remove())
+    }, 1000 * (Math.random() * 20 + 1));
 
-      const timeout = setTimeout(() => {
-        navigate('/projects');
-      }, 1500);
-      return () => clearTimeout(timeout);
+
+    for (let i = 0; i < 3; i++) {
+      addArtifactRandomly()
     }
-  }, [entering, api, navigate]);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center  h-screen bg-black">
-      <Vortex baseHue={100}>
-        <Canvas
-          camera={{position: [0, 0, 5], fov: 35}}
-          style={{width: '100vw', height: '100vh', background: 'transparent'}}
-        >
-          <animated.group
-            scale={springProps.scale as unknown as [number, number, number]}
-            position={springProps.position as unknown as [number, number, number]}
-            rotation={springProps.rotation as unknown as [number, number, number]}
-          >
-            <Text
-              scale={0.4}
-              position={[0, 0, 1]}
-              fontSize={0.7}
-              color="#000000"
-              font={'/CarinoSansBold.ttf'}
-              fontWeight={"bold"}
-              fontStyle={"normal"}
-              material={new THREE.MeshBasicMaterial({color: '#ffffff', reflectivity: 0, opacity: 2})}
-            >
-              Opal
-            </Text>
-            <Html position={[-0.1, -0.15, 2]}>
-              <button
-                onClick={() => setEntering(true)}
-                hidden={entering}
-                className="bg-black text-cyan-300 px-4 py-2 rounded-lg shadow-lg w-28 hover:bg-white transition-colors duration-300">
-                Dive in!
-              </button>
-            </Html>
-            <Droplet/>
-          </animated.group>
-          <ambientLight intensity={0.1}/>
-          {/* Optional: For rotating with mouse */}
-          {/*<OrbitControls enableZoom={false}/>*/}
-        </Canvas>
-      </Vortex>
+    <div className="flex flex-col items-center justify-center h-screen gap-8">
+      <div className={'font-manrope space-x-1.5 z-10'}>
+        <span className={'text-5xl font-light'}>Opal</span>
+        <span className={'text-sm text-white bg-black py-0.5 px-1'}>BETA</span>
+      </div>
+
+      <PrimaryButton className={'px-8 z-10'} onClick={() => navigate('/projects')}>Jump In</PrimaryButton>
+
+      <div className={'artifacts absolute [&>div]:absolute w-screen h-screen pointer-events-none z-0'}>
+        {/*<div className={'random-1 w-36 aspect-square bg-pink-600 left-1/8 top-1/6 shadow-[10px_10px_0_1px_#000000]'}/>*/}
+        {/*<div*/}
+        {/*  className={'random-2 w-20 aspect-square bg-teal-500 left-1/4 bottom-1/3 border-2 shadow-[15px_15px_0_1px_#000000]'}/>*/}
+        {/*<div className={'random-3 w-40 h-20 bg-blue-500 left-1/5 bottom-1/2 border-2 shadow-[7px_7px_0_1px_#000000]'}/>*/}
+        {/**/}
+        {/*<div*/}
+        {/*  className={'random-1 w-36 aspect-square bg-white right-1/8 top-1/6 border-2 shadow-[10px_10px_0_1px_#000000]'}/>*/}
+        {/*<div*/}
+        {/*  className={'random-2 w-20 aspect-square bg-white right-1/4 bottom-1/3 border-2 shadow-[15px_15px_0_1px_#000000]'}/>*/}
+        {/*<div className={'random-3 w-40 h-20 bg-white right-1/5 bottom-1/2 border-2 shadow-[7px_7px_0_1px_#000000]'}/>*/}
+      </div>
     </div>
-  );
+  )
 }
 
 function Droplet() {
