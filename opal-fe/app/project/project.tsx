@@ -22,7 +22,7 @@ import {
 } from "@mantine/core";
 import {api} from "~/api";
 import {Outlet, useNavigate, useOutletContext, useParams} from "react-router";
-import {IconBox, IconCheck, IconCopy, IconCpu, IconHome, IconPlus, IconUsersGroup} from '@tabler/icons-react';
+import {IconBox, IconCheck, IconCopy, IconCpu, IconHome, IconPlus, IconTrash, IconUsersGroup} from '@tabler/icons-react';
 import {useEnvironment} from "~/hooks/states";
 import type {Role} from "~/types/role";
 import {formatDate} from "~/utils/datetime";
@@ -49,7 +49,7 @@ export function ProjectDashboard() {
     error,
   } = useQuery<Project[]>({
     queryKey: ["projects"],
-    queryFn: () => api.get("/api/project").then((res) => res.data),
+    queryFn: () => api.get("/api/project/").then((res) => res.data),
   });
 
   const createProjectMutation = useMutation({
@@ -272,6 +272,7 @@ client.authenticate("user@example.com", "password123", "email-password").then((s
 export function UsersTab({id}: { id: string }) {
   const {env} = useEnvironment()
   const [visibleCreateUserModal, setVisibleCreateUserModal] = useState(false);
+  
   const {
     data = [],
     isLoading,
@@ -285,6 +286,7 @@ export function UsersTab({id}: { id: string }) {
       }
     }).then((res) => res.data),
   });
+  
   const {
     data: roles = [],
     isLoading: isRolesLoading,
@@ -297,6 +299,32 @@ export function UsersTab({id}: { id: string }) {
       }
     }).then((res) => res.data),
   });
+
+  const onCreate = async (newUser: Record<string, any>) => {
+    const res = await api.post(`/api/project/${id}/user`, newUser, {
+      headers: {
+        'X-Environment': env
+      }
+    });
+    return res.data;
+  }
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => api.delete(`/api/project/${id}/user/${userId}`, {
+      headers: {
+        'X-Environment': env
+      }
+    }),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const handleDeleteUser = (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      deleteUserMutation.mutate(userId);
+    }
+  };
 
   if (isLoading) {
     return <Text>Loading users...</Text>;
@@ -315,25 +343,25 @@ export function UsersTab({id}: { id: string }) {
   }
 
   const tableData = {
-    head: ["Name", "User ID", "Email", "Phone", "Enabled", "Role"],
+    head: ["Name", "User ID", "Email", "Phone", "Enabled", "Role", "Actions"],
     body: data.map((user: any) => [
       user.name,
       user.username,
       user.email,
       user.phone,
       user.is_enabled ? "Yes" : "No",
-      Array.isArray(user.roles) ? user.roles.map((r: any) => r.name).join(", ") : "-"
+      Array.isArray(user.roles) ? user.roles.map((r: any) => r.name).join(", ") : "-",
+      <ActionIcon
+        key={user.id}
+        color="red"
+        variant="subtle"
+        onClick={() => handleDeleteUser(user.id)}
+        size="sm"
+      >
+        <IconTrash size={16} />
+      </ActionIcon>
     ]),
   };
-
-  const onCreate = async (newUser: Record<string, any>) => {
-    const res = await api.post(`/api/project/${id}/user`, newUser, {
-      headers: {
-        'X-Environment': env
-      }
-    });
-    return res.data;
-  }
 
   return (
     <Paper p="md" radius="md">
@@ -413,6 +441,7 @@ export function UsersTab({id}: { id: string }) {
 export function RolesTab({id}: { id: string }) {
   const {env} = useEnvironment()
   const [visibleCreateRoleModal, setVisibleCreateRoleModal] = useState(false);
+  
   const {
     data = [],
     isLoading,
@@ -426,21 +455,6 @@ export function RolesTab({id}: { id: string }) {
       }
     }).then((res) => res.data),
   });
-  if (isLoading) {
-    return <Text>Loading roles...</Text>;
-  }
-
-  if (error) {
-    return <Text className={'text-red-500'}>Error loading roles</Text>;
-  }
-
-  const tableData = {
-    head: ["Role", "Enabled"],
-    body: data.map((role: any) => [
-      role.name,
-      role.is_enabled ? "Yes" : "No",
-    ]),
-  };
 
   const onCreate = async (newRole: Record<string, any>) => {
     const res = await api.post(`/api/project/${id}/role`, newRole, {
@@ -450,6 +464,49 @@ export function RolesTab({id}: { id: string }) {
     });
     return res.data;
   }
+
+  const deleteRoleMutation = useMutation({
+    mutationFn: (roleId: string) => api.delete(`/api/project/${id}/role/${roleId}`, {
+      headers: {
+        'X-Environment': env
+      }
+    }),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const handleDeleteRole = (roleId: string) => {
+    if (window.confirm('Are you sure you want to delete this role? This will also remove the role from all users.')) {
+      deleteRoleMutation.mutate(roleId);
+    }
+  };
+
+  if (isLoading) {
+    return <Text>Loading roles...</Text>;
+  }
+
+  if (error) {
+    return <Text className={'text-red-500'}>Error loading roles</Text>;
+  }
+
+  const tableData = {
+    head: ["Role", "Enabled", "Actions"],
+    body: data.map((role: any) => [
+      role.name,
+      role.is_enabled ? "Yes" : "No",
+      <ActionIcon
+        key={role.id}
+        color="red"
+        variant="subtle"
+        onClick={() => handleDeleteRole(role.id)}
+        size="sm"
+      >
+        <IconTrash size={16} />
+      </ActionIcon>
+    ]),
+  };
+  
   return (
     <Paper p="md" radius="md">
       <Stack gap="sm">

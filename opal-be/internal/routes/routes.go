@@ -26,8 +26,10 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 			project.GET("/:pid", h.HandleGetProjectById)
 			project.GET("/:pid/user", h.HandleGetProjectUsers)
 			project.POST("/:pid/user", h.HandleCreateProjectUser)
+			project.DELETE("/:pid/user/:uid", h.HandleDeleteProjectUser)
 			project.GET("/:pid/role", h.HandleGetProjectRoles)
 			project.POST("/:pid/role", h.HandleCreateProjectRole)
+			project.DELETE("/:pid/role/:rid", h.HandleDeleteProjectRole)
 		}
 
 		// SDK consumption
