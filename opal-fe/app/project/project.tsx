@@ -22,7 +22,7 @@ import {
 } from "@mantine/core";
 import {api} from "~/api";
 import {Outlet, useNavigate, useOutletContext, useParams} from "react-router";
-import {IconBox, IconCheck, IconCopy, IconCpu, IconHome, IconPlus, IconUsersGroup} from '@tabler/icons-react';
+import {IconBox, IconCheck, IconCopy, IconCpu, IconHome, IconPlus, IconTrash, IconUsersGroup} from '@tabler/icons-react';
 import {useEnvironment} from "~/hooks/states";
 import type {Role} from "~/types/role";
 import {formatDate} from "~/utils/datetime";
@@ -315,14 +315,23 @@ export function UsersTab({id}: { id: string }) {
   }
 
   const tableData = {
-    head: ["Name", "User ID", "Email", "Phone", "Enabled", "Role"],
+    head: ["Name", "User ID", "Email", "Phone", "Enabled", "Role", "Actions"],
     body: data.map((user: any) => [
       user.name,
       user.username,
       user.email,
       user.phone,
       user.is_enabled ? "Yes" : "No",
-      Array.isArray(user.roles) ? user.roles.map((r: any) => r.name).join(", ") : "-"
+      Array.isArray(user.roles) ? user.roles.map((r: any) => r.name).join(", ") : "-",
+      <ActionIcon
+        key={user.id}
+        color="red"
+        variant="subtle"
+        onClick={() => handleDeleteUser(user.id)}
+        size="sm"
+      >
+        <IconTrash size={16} />
+      </ActionIcon>
     ]),
   };
 
@@ -334,6 +343,23 @@ export function UsersTab({id}: { id: string }) {
     });
     return res.data;
   }
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => api.delete(`/api/project/${id}/user/${userId}`, {
+      headers: {
+        'X-Environment': env
+      }
+    }),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const handleDeleteUser = (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      deleteUserMutation.mutate(userId);
+    }
+  };
 
   return (
     <Paper p="md" radius="md">
@@ -435,10 +461,19 @@ export function RolesTab({id}: { id: string }) {
   }
 
   const tableData = {
-    head: ["Role", "Enabled"],
+    head: ["Role", "Enabled", "Actions"],
     body: data.map((role: any) => [
       role.name,
       role.is_enabled ? "Yes" : "No",
+      <ActionIcon
+        key={role.id}
+        color="red"
+        variant="subtle"
+        onClick={() => handleDeleteRole(role.id)}
+        size="sm"
+      >
+        <IconTrash size={16} />
+      </ActionIcon>
     ]),
   };
 
@@ -450,6 +485,23 @@ export function RolesTab({id}: { id: string }) {
     });
     return res.data;
   }
+
+  const deleteRoleMutation = useMutation({
+    mutationFn: (roleId: string) => api.delete(`/api/project/${id}/role/${roleId}`, {
+      headers: {
+        'X-Environment': env
+      }
+    }),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const handleDeleteRole = (roleId: string) => {
+    if (window.confirm('Are you sure you want to delete this role? This will also remove the role from all users.')) {
+      deleteRoleMutation.mutate(roleId);
+    }
+  };
   return (
     <Paper p="md" radius="md">
       <Stack gap="sm">
