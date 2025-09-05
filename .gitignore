@@ -1,0 +1,25 @@
+# Backend binaries
+opal-be/main
+opal-be/migrate
+
+# Node modules and build artifacts
+opal-fe/node_modules/
+opal-fe/build/
+opal-fe/dist/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

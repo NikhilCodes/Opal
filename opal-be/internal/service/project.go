@@ -19,8 +19,10 @@ type ProjectService interface {
 	GetProjectByID(ctx *gin.Context, pid string) (model.Project, error)
 	GetAllUserOfProject(ctx *gin.Context, pid uuid.UUID) ([]model.ProjectUser, error)
 	CreateProjectUser(ctx *gin.Context, pid uuid.UUID, pu model.ProjectUser) (*model.ProjectUser, error)
+	DeleteProjectUser(ctx *gin.Context, pid uuid.UUID, uid uuid.UUID) error
 	GetAllRolesOfProject(ctx *gin.Context, pid uuid.UUID) ([]model.ProjectRole, error)
 	CreateProjectRole(ctx *gin.Context, pid uuid.UUID, role string) error
+	DeleteProjectRole(ctx *gin.Context, pid uuid.UUID, rid uuid.UUID) error
 }
 
 type projectService struct {
@@ -111,4 +113,28 @@ func (s *projectService) CreateProjectUser(ctx *gin.Context, pid uuid.UUID, pu m
 		return nil, err
 	}
 	return &pu, nil
+}
+
+func (s *projectService) DeleteProjectUser(ctx *gin.Context, pid uuid.UUID, uid uuid.UUID) error {
+	// First, delete all user roles for this user
+	err := db.DB(ctx).Where("user_id = ? AND project_id = ?", uid, pid).Delete(&model.ProjectUserRole{}).Error
+	if err != nil {
+		return err
+	}
+	
+	// Then delete the user
+	err = db.DB(ctx).Where("id = ? AND project_id = ?", uid, pid).Delete(&model.ProjectUser{}).Error
+	return err
+}
+
+func (s *projectService) DeleteProjectRole(ctx *gin.Context, pid uuid.UUID, rid uuid.UUID) error {
+	// First, delete all user roles that reference this role
+	err := db.DB(ctx).Where("role_id = ? AND project_id = ?", rid, pid).Delete(&model.ProjectUserRole{}).Error
+	if err != nil {
+		return err
+	}
+	
+	// Then delete the role
+	err = db.DB(ctx).Where("id = ? AND project_id = ?", rid, pid).Delete(&model.ProjectRole{}).Error
+	return err
 }

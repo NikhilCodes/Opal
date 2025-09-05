@@ -107,3 +107,53 @@ func (h *ProjectHandler) HandleCreateProjectRole(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Role added successfully"})
 }
+
+func (h *ProjectHandler) HandleDeleteProjectUser(c *gin.Context) {
+	pid := c.Param("pid")
+	uid := c.Param("uid")
+	
+	pidUUID, err := uuid.Parse(pid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
+		return
+	}
+	
+	uidUUID, err := uuid.Parse(uid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	
+	err = h.Service.DeleteProjectUser(c, pidUUID, uidUUID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete project user"})
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
+}
+
+func (h *ProjectHandler) HandleDeleteProjectRole(c *gin.Context) {
+	pid := c.Param("pid")
+	rid := c.Param("rid")
+	
+	pidUUID, err := uuid.Parse(pid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
+		return
+	}
+	
+	ridUUID, err := uuid.Parse(rid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
+		return
+	}
+	
+	err = h.Service.DeleteProjectRole(c, pidUUID, ridUUID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete project role"})
+		return
+	}
+	
+	c.JSON(http.StatusOK, gin.H{"message": "Role deleted successfully"})
+}
